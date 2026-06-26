@@ -50,6 +50,28 @@ class PlacesClient:
             "X-Goog-FieldMask": field_mask,
         }
 
+    def _post(self, url: str, field_mask: str, body: dict) -> dict:
+        """POSTし、エラー時は Google のエラー本文を含めて分かりやすく投げる。"""
+        resp = self.session.post(
+            url, headers=self._headers(field_mask), json=body, timeout=30
+        )
+        if not resp.ok:
+            # Google のエラー本文（原因が書かれている）を抽出して例外に載せる
+            detail = ""
+            try:
+                err = resp.json().get("error", {})
+                detail = f"{err.get('status', '')}: {err.get('message', '')}"
+            except Exception:
+                detail = resp.text[:500]
+            raise RuntimeError(
+                f"Google Places API がエラーを返しました (HTTP {resp.status_code})。\n"
+                f"  内容: {detail}\n"
+                f"  → 多くは『Places API (New) が未有効』『課金(請求先)未設定』"
+                f"『APIキーの制限(HTTPリファラー制限など)』が原因です。"
+                f" docs/SETUP_GUIDE.md の STEP 3〜4 を確認してください。"
+            )
+        return resp.json()
+
     def search_nearby_circle(
         self, lat: float, lng: float, radius_m: float, included_types: list[str]
     ) -> list[Place]:
@@ -66,11 +88,7 @@ class PlacesClient:
                 }
             },
         }
-        resp = self.session.post(
-            SEARCH_NEARBY_URL, headers=self._headers(NEARBY_FIELDS), json=body, timeout=30
-        )
-        resp.raise_for_status()
-        data = resp.json()
+        data = self._post(SEARCH_NEARBY_URL, NEARBY_FIELDS, body)
         return [Place.from_places_api(p) for p in data.get("places", [])]
 
     def search_all_circles(
@@ -96,11 +114,8 @@ class PlacesClient:
             "regionCode": self.region,
             "maxResultCount": 20,
         }
-        resp = self.session.post(
-            SEARCH_TEXT_URL, headers=self._headers("places.id"), json=body, timeout=30
-        )
-        resp.raise_for_status()
-        return len(resp.json().get("places", []))
+        data = self._post(SEARCH_TEXT_URL, "places.id", body)
+        return len(data.get("places", []))
 
 
 def make_nationwide_counter(
