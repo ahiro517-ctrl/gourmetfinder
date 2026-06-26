@@ -8,6 +8,7 @@ from pathlib import Path
 
 from . import config as cfgmod
 from . import scoring
+from .blocklist import is_blocked
 from .chains import is_chain
 from .geo import point_in_polygon
 from .learning import DISLIKE, Feedback, learn_chain_keywords, update_weights
@@ -73,6 +74,7 @@ def build_candidates(
     cands_cfg = settings.config.get("candidates", {})
     weights = settings.weight_values
     keywords = settings.chain_keywords
+    block_keywords = settings.block_keywords
     nationwide_threshold = settings.chains.get("nationwide_threshold", 8)
 
     out: list[Candidate] = []
@@ -80,6 +82,9 @@ def build_candidates(
         if p.place_id in skip_ids:
             continue
         if (p.business_status or "OPERATIONAL") != "OPERATIONAL":
+            continue
+        # 取材NG（運営会社・店舗）はスコアに関係なく完全除外
+        if is_blocked(p, block_keywords):
             continue
 
         # 初回は基準作成のみ（全件を「新店」にしない）
