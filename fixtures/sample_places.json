@@ -1,0 +1,122 @@
+[
+  {
+    "id": "demo-0001",
+    "displayName": { "text": "鮨処 こうなん" },
+    "formattedAddress": "東京都港区港南2-1-1",
+    "location": { "latitude": 35.6288, "longitude": 139.7415 },
+    "types": ["restaurant", "food"],
+    "primaryType": "sushi_restaurant",
+    "rating": 4.6,
+    "userRatingCount": 12,
+    "priceLevel": "PRICE_LEVEL_EXPENSIVE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0002",
+    "displayName": { "text": "スターバックス 品川港南店" },
+    "formattedAddress": "東京都港区港南2-3-13",
+    "location": { "latitude": 35.6291, "longitude": 139.7409 },
+    "types": ["cafe", "food"],
+    "primaryType": "cafe",
+    "rating": 4.0,
+    "userRatingCount": 850,
+    "priceLevel": "PRICE_LEVEL_MODERATE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0003",
+    "displayName": { "text": "町中華 龍門" },
+    "formattedAddress": "東京都品川区北品川1-5-2",
+    "location": { "latitude": 35.6235, "longitude": 139.7405 },
+    "types": ["restaurant", "food"],
+    "primaryType": "chinese_restaurant",
+    "rating": 4.3,
+    "userRatingCount": 28,
+    "priceLevel": "PRICE_LEVEL_INEXPENSIVE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0004",
+    "displayName": { "text": "ビストロ 東品川テラス" },
+    "formattedAddress": "東京都品川区東品川1-39-5",
+    "location": { "latitude": 35.6228, "longitude": 139.7455 },
+    "types": ["restaurant", "bar", "food"],
+    "primaryType": "french_restaurant",
+    "rating": 4.5,
+    "userRatingCount": 8,
+    "priceLevel": "PRICE_LEVEL_EXPENSIVE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0005",
+    "displayName": { "text": "丸亀製麺 港南店" },
+    "formattedAddress": "東京都港区港南1-8-40",
+    "location": { "latitude": 35.6300, "longitude": 139.7430 },
+    "types": ["restaurant", "food"],
+    "primaryType": "udon_restaurant",
+    "rating": 3.8,
+    "userRatingCount": 420,
+    "priceLevel": "PRICE_LEVEL_INEXPENSIVE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0006",
+    "displayName": { "text": "炭火焼 きたしながわ" },
+    "formattedAddress": "東京都品川区北品川2-3-7",
+    "location": { "latitude": 35.6210, "longitude": 139.7420 },
+    "types": ["restaurant", "bar", "food"],
+    "primaryType": "yakitori_restaurant",
+    "rating": 4.4,
+    "userRatingCount": 35,
+    "priceLevel": "PRICE_LEVEL_MODERATE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0007",
+    "displayName": { "text": "天王洲 シーフードバル" },
+    "formattedAddress": "東京都品川区東品川2-1-3",
+    "location": { "latitude": 35.6195, "longitude": 139.7505 },
+    "types": ["restaurant", "bar", "food"],
+    "primaryType": "seafood_restaurant",
+    "rating": 4.2,
+    "userRatingCount": 60,
+    "priceLevel": "PRICE_LEVEL_MODERATE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0008",
+    "displayName": { "text": "サイゼリヤ 品川インターシティ店" },
+    "formattedAddress": "東京都港区港南2-15-2",
+    "location": { "latitude": 35.6275, "longitude": 139.7438 },
+    "types": ["restaurant", "food"],
+    "primaryType": "italian_restaurant",
+    "rating": 3.7,
+    "userRatingCount": 530,
+    "priceLevel": "PRICE_LEVEL_INEXPENSIVE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0009",
+    "displayName": { "text": "自家製パン こなや" },
+    "formattedAddress": "東京都港区港南3-2-1",
+    "location": { "latitude": 35.6325, "longitude": 139.7458 },
+    "types": ["bakery", "food"],
+    "primaryType": "bakery",
+    "rating": 4.7,
+    "userRatingCount": 5,
+    "priceLevel": "PRICE_LEVEL_MODERATE",
+    "businessStatus": "OPERATIONAL"
+  },
+  {
+    "id": "demo-0010",
+    "displayName": { "text": "閉店したカフェ" },
+    "formattedAddress": "東京都港区港南2-4-4",
+    "location": { "latitude": 35.6289, "longitude": 139.7412 },
+    "types": ["cafe", "food"],
+    "primaryType": "cafe",
+    "rating": 4.1,
+    "userRatingCount": 90,
+    "priceLevel": "PRICE_LEVEL_MODERATE",
+    "businessStatus": "CLOSED_PERMANENTLY"
+  }
+]
