@@ -1,7 +1,7 @@
 name: 取材候補ソーシング（週次）
 
 # 毎週月曜 09:00 JST（00:00 UTC）に自動実行。
-# 「Actions」タブの "Run workflow" ボタンから手動実行もできます。
+# 「Actions」タブで本ワークフローを選び、"Run workflow" ボタンから手動実行もできます。
 on:
   schedule:
     - cron: "0 0 * * 1"
