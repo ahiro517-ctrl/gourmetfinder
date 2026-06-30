@@ -107,6 +107,9 @@ def build_candidates(
         cand.reasons = build_reasons(cand)
         out.append(cand)
 
+    # スコアが低すぎる候補は提案しない（枠を埋めるためにチェーン等を出さない）
+    min_score = cands_cfg.get("min_score", 0.5)
+    out = [c for c in out if c.score >= min_score]
     out.sort(key=lambda c: c.score, reverse=True)
     return out
 

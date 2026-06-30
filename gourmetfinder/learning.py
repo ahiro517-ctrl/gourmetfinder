@@ -17,6 +17,22 @@ from dataclasses import dataclass
 LIKE = {"○", "◯", "o", "O", "取材したい", "取材", "yes", "Yes"}
 DISLIKE = {"×", "x", "X", "却下", "no", "No"}
 
+# 各特徴量の「意味としての符号」。学習でこの符号は反転させない。
+#  +1: 大きいほど良い（独立系・高評価・新店・穴場）
+#  -1: 大きいほど悪い（チェーン）
+# これにより「× された独立系が多い → independentがマイナスに反転 → チェーンが上位」
+# という誤学習を防ぐ。学習は符号を保ったまま強さ(絶対値)だけ調整する。
+FEATURE_SIGNS = {
+    "new_store": 1,
+    "rating": 1,
+    "hidden_gem": 1,
+    "independent": 1,
+    "chain_penalty": -1,
+}
+
+# このいずれかをタグに含む × を「チェーンだから却下」とみなし、チェーン語を学習する
+CHAIN_TAG_HINTS = ("チェーン", "全国", "ナショナル", "大手", "フランチャイズ")
+
 
 @dataclass
 class Feedback:
@@ -55,9 +71,29 @@ def update_weights(
             if v == 0:
                 continue
             updated = new_weights.get(k, 0.0) + learning_rate * s * v
-            new_weights[k] = max(lo, min(hi, updated))
+            updated = max(lo, min(hi, updated))
+            # 特徴量の意味としての符号を超えない（反転させない）
+            sign_dir = FEATURE_SIGNS.get(k, 0)
+            if sign_dir > 0:
+                updated = max(0.0, updated)
+            elif sign_dir < 0:
+                updated = min(0.0, updated)
+            new_weights[k] = updated
 
     return new_weights
+
+
+def _brand_token(name: str) -> str:
+    """店名から「ブランド名」らしき部分を取り出す。
+
+    多くのチェーンは「ブランド名 + 支店名」（例: 『PRONTO 品川店』『スターバックス 品川港南店』）
+    なので、最初の空白までを取るとブランド名になりやすい。空白が無ければ全体を使う。
+    """
+    name = (name or "").strip()
+    for sep in (" ", "　"):
+        if sep in name:
+            return name.split(sep)[0]
+    return name
 
 
 def learn_chain_keywords(
@@ -66,18 +102,19 @@ def learn_chain_keywords(
     *,
     name_by_place_id: dict[str, str],
 ) -> list[str]:
-    """× かつ タグに「チェーン」を含むフィードバックから、店名をチェーン語に追加する。
+    """× かつ「チェーン系」を示すタグのフィードバックから、ブランド名をチェーン語に追加する。
 
-    完全な店名を入れると汎用性が低いが、明示的に「チェーン嫌」と言われた店は
-    次回から確実に減点したいので、店名そのものを追加する保守的な実装。
+    タグに『チェーン/全国/ナショナル/大手/フランチャイズ』のいずれかを含む × を対象とし、
+    店名の先頭ブランド部分を登録する（同チェーンの他支店にも効くようにするため）。
     """
     new_keywords = list(keywords)
     for fb in feedback:
         if _sign(fb.evaluation) != -1:
             continue
-        if "チェーン" not in (fb.tags or ""):
+        tags = fb.tags or ""
+        if not any(h in tags for h in CHAIN_TAG_HINTS):
             continue
-        name = name_by_place_id.get(fb.place_id, "")
-        if name and name not in new_keywords:
-            new_keywords.append(name)
+        token = _brand_token(name_by_place_id.get(fb.place_id, ""))
+        if token and token not in new_keywords:
+            new_keywords.append(token)
     return new_keywords

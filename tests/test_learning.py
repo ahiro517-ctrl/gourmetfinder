@@ -42,15 +42,39 @@ def test_bounds_respected():
     assert w["new_store"] <= BOUNDS["max"]
 
 
-def test_learn_chain_keyword_from_feedback():
+def test_learn_chain_keyword_uses_brand_token():
+    # 「ブランド名 + 支店名」から先頭ブランドを学習する
     fb = [Feedback("p1", "×", "チェーン嫌", {})]
     kw = learn_chain_keywords(
-        ["既存"], fb, name_by_place_id={"p1": "全国チェーンっぽい店"}
+        ["既存"], fb, name_by_place_id={"p1": "スターバックス 品川港南店"}
     )
-    assert "全国チェーンっぽい店" in kw
+    assert "スターバックス" in kw
+
+
+def test_learn_chain_keyword_various_tags():
+    # 「全国」「ナショナル」など『チェーン』以外の語でも反応する
+    fb = [Feedback("p1", "×", "ナショナルチェーンNG", {})]
+    kw = learn_chain_keywords(["既存"], fb, name_by_place_id={"p1": "PRONTO 品川店"})
+    assert "PRONTO" in kw
 
 
 def test_learn_chain_keyword_ignores_non_chain_tag():
     fb = [Feedback("p1", "×", "遠い", {})]
     kw = learn_chain_keywords(["既存"], fb, name_by_place_id={"p1": "遠い店"})
     assert "遠い店" not in kw
+
+
+def test_independent_weight_never_inverts():
+    # 独立系の店を大量に × しても independent はマイナスに反転しない（0で下げ止まる）
+    fb = [Feedback("p1", "×", "", {"independent": 1.0})] * 100
+    w = update_weights(WEIGHTS, fb, learning_rate=0.3, bounds=BOUNDS)
+    assert w["independent"] >= 0.0
+
+
+def test_chains_never_outrank_independents_after_heavy_dislike():
+    # 独立系を大量に × した後でも、独立系スコア > チェーンスコア が保たれる
+    fb = [Feedback("p1", "×", "", {"rating": 0.5, "independent": 1.0})] * 100
+    w = update_weights(WEIGHTS, fb, learning_rate=0.3, bounds=BOUNDS)
+    indie = w["independent"] * 1.0  # 独立系の寄与
+    chain = w["chain_penalty"] * 1.0  # チェーンの寄与
+    assert indie >= chain
