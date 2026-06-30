@@ -1,8 +1,8 @@
 weights:
   new_store: 3.0
-  rating: 1.55
+  rating: 0.27500000000000024
   hidden_gem: 1.5
-  independent: 0.8999999999999999
+  independent: -1.2000000000000002
   chain_penalty: -2.0
 learning_rate: 0.3
 bounds:
